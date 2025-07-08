@@ -12,6 +12,6 @@ dataThree = user.DataProcessing('ChargeHist(3).csv', 'AmplHist(3).csv', 0.5, 2)
 dataThree.PlotAmpl()
 dataThree.PlotCharge()
 '''
-dataFour = user.DataProcessing('ChargeHist(4).csv', 'AmplHist(4).csv', 0.5, 2, 62, 62)
+dataFour = user.DataProcessing('ChargeHist(4).csv', 'AmplHist(4).csv', 0.5, 2, 40, 50)
 dataFour.PlotAmpl()
 dataFour.PlotCharge()
