@@ -1,5 +1,5 @@
 import oop as user
-
+'''
 dataOne = user.DataProcessing('ChargeHist.csv', 'AmplHist.csv', 0.5, 2)
 dataOne.PlotAmpl()
 dataOne.PlotCharge()
@@ -11,3 +11,7 @@ dataTwo.PlotCharge()
 dataThree = user.DataProcessing('ChargeHist(3).csv', 'AmplHist(3).csv', 0.5, 2)
 dataThree.PlotAmpl()
 dataThree.PlotCharge()
+'''
+dataFour = user.DataProcessing('ChargeHist(4).csv', 'AmplHist(4).csv', 0.5, 2, 62, 62)
+dataFour.PlotAmpl()
+dataFour.PlotCharge()

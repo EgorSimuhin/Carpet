@@ -1,23 +1,26 @@
 import numpy as np     
 import secondMax as sm
+import findMaxMin as fMM
 import trash as tr
 from scipy import stats                                                                                                                                                                     
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 class DataProcessing():
-    def __init__(self, chargename, histname, q, b):
+    def __init__(self, chargename, histname, q, b, chargeNumber, amplNumber):
         self.chargename = chargename
         self.histname = histname
         self.limits = 800
         self.q = q
         self.b = b
+        self.chargeNumber = chargeNumber
+        self.amplNumber = amplNumber
 
     def getterdata(self):
         ChargeHist = np.loadtxt(self.chargename, delimiter=';')
         AmplHist   = np.loadtxt(self.histname, delimiter=';')
-        ch = tr.arraycut(ChargeHist, self.q/self.b)
-        ap = tr.arraycut(AmplHist, self.q/self.b)
+        ch = tr.arraycut(ChargeHist[self.chargeNumber:], self.q/self.b)
+        ap = tr.arraycut(AmplHist[self.amplNumber:], self.q/self.b)
         return ch, ap
 
     def gauss(self, x, a, x0, s):
@@ -107,12 +110,22 @@ class DataProcessing():
         plt.scatter(X, self.getterdata()[0])
         if rv_ch_two >= rv_ch_sum:
             self.PlotAllGauss(X, p_ch_two)
-            plt.plot(X, self.twogauss(X, *p_ch_two), label='Аппроксимация', color='g', linewidth=2)
+            LocalMax, IndexMax, LocalMin, IndexMin = fMM.findMaxMin(self.twogauss(X, *p_ch_two))
+            plt.plot(X, self.twogauss(X, *p_ch_two), label=(f'LocalMax = {LocalMax}, '
+                    f'MaxCoord = {IndexMax}, '
+                    f'LocalMin = {LocalMin}, '
+                    f'MinCoord = {IndexMin}'),
+                    color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.chargename + " Два гаусса")
         else:                                                                                                                                                          
             self.PlotAllGaussAndExp(X, p_ch_sum)
-            plt.plot(X, self.sumexpwithgauss(X, *p_ch_sum), label='Аппроксимация', color='g', linewidth=2)
+            LocalMax, IndexMax, LocalMin, IndexMin = fMM.findMaxMin(self.sumexpwithgauss(X, *p_ch_sum))
+            plt.plot(X, self.sumexpwithgauss(X, *p_ch_sum), label=(f'LocalMax = {LocalMax}, '
+                    f'MaxCoord = {IndexMax}, '
+                    f'LocalMin = {LocalMin}, '
+                    f'MinCoord = {IndexMin}'),
+                    color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.chargename + " Два гаусса и экспонента")
         plt.show()
@@ -127,12 +140,22 @@ class DataProcessing():
         plt.scatter(X, self.getterdata()[1])
         if rv_ap_two >= rv_ap_sum:
             self.PlotAllGauss(X, p_ap_two)
-            plt.plot(X, self.twogauss(X, *p_ap_two), label='Апроксимация', color='g', linewidth=2)
+            LocalMax, IndexMax, LocalMin, IndexMin = fMM.findMaxMin(self.twogauss(X, *p_ap_two))
+            plt.plot(X, self.twogauss(X, *p_ap_two), label=(f'LocalMax = {LocalMax}, '
+                    f'MaxCoord = {IndexMax}, '
+                    f'LocalMin = {LocalMin}, '
+                    f'MinCoord = {IndexMin}'),
+                    color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.histname + " Два гаусса")
         else:                                                                                                                                                          
             self.PlotAllGaussAndExp(X, p_ap_sum)
-            plt.plot(X, self.sumexpwithgauss(X, *p_ap_sum), label='Апроксимация', color='g', linewidth=2)
+            LocalMax, IndexMax, LocalMin, IndexMin = fMM.findMaxMin(self.sumexpwithgauss(X, *p_ap_sum))
+            plt.plot(X, self.sumexpwithgauss(X, *p_ap_sum), label=(f'LocalMax = {LocalMax}, '
+                    f'MaxCoord = {IndexMax}, '
+                    f'LocalMin = {LocalMin}, '
+                    f'MinCoord = {IndexMin}'),
+                    color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.histname + " Два гаусса и экспонента")
         plt.show()
