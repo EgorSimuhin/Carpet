@@ -20,36 +20,30 @@ class DataProcessing():
         ap = tr.arraycut(AmplHist, self.q/self.b)
         return ch, ap
 
-    @staticmethod
-    def gauss(x, a, x0, s):
+    def gauss(self, x, a, x0, s):
         return a*np.exp(-((x-x0)/s)**2)
     
-    @staticmethod
-    def twogauss(x, *p): #Возможная функция1
+    def twogauss(self, x, *p): #Возможная функция1
         res = 0
         for i in range(2):
-            res += DataProcessing.gauss(x, p[i*3], p[i*3+1], p[i*3+2])
+            res += self.gauss(x, p[i*3], p[i*3+1], p[i*3+2])
         return res
 
-    @staticmethod
-    def exp(x, a, b, c, d):
+    def exp(self, x, a, b, c, d):
         return a * np.exp(-b*x + c) + d
 
-    @staticmethod
-    def sumexpwithgauss(x, a, b, c, d, *p): #Возможная функция2
-        return  DataProcessing.twogauss(x, *p) + DataProcessing.exp(x, a, b, c, d)
+    def sumexpwithgauss(self, x, a, b, c, d, *p): #Возможная функция2
+        return  self.twogauss(x, *p) + self.exp(x, a, b, c, d)
 
-    @staticmethod    
-    def PlotAllGauss(x, p):
+    def PlotAllGauss(self, x, p):
         n = len(p)//3
         for i in range(n):
-            plt.plot(x, DataProcessing.gauss(x,p[i*3],p[i*3+1],p[i*3+2]), 'b', linewidth=1, label=f'{i}-гаусс')
+            plt.plot(x, self.gauss(x,p[i*3],p[i*3+1],p[i*3+2]), 'b', linewidth=1, label=f'{i}-гаусс')
 
-    @staticmethod    
-    def PlotAllGaussAndExp(x, p):
-        plt.plot(x, DataProcessing.exp(x,p[0],p[1],p[2], p[3]), color='red', linewidth=1, label='Экспонента')
-        plt.plot(x, DataProcessing.gauss(x, p[4], p[5], p[6]), color='orange', linewidth=1, label='Первый гаусс')
-        plt.plot(x, DataProcessing.gauss(x, p[7], p[8], p[9]), color='blue', linewidth=1, label='Второй гаусс')
+    def PlotAllGaussAndExp(self, x, p):
+        plt.plot(x, self.exp(x,p[0],p[1],p[2], p[3]), color='red', linewidth=1, label='Экспонента')
+        plt.plot(x, self.gauss(x, p[4], p[5], p[6]), color='orange', linewidth=1, label='Первый гаусс')
+        plt.plot(x, self.gauss(x, p[7], p[8], p[9]), color='blue', linewidth=1, label='Второй гаусс')
 
     def ChargePictureTwoGauss(self):
         ch = self.getterdata()[0]
@@ -60,8 +54,8 @@ class DataProcessing():
         ip0= [maxSecondElement, maxSecondIndex, 10, maxElement, maxIndex, 10]
         top_limits = [self.limits] * 6
         X = np.arange(0, len(ch), 1)
-        p_ch, cov_ch = curve_fit(DataProcessing.twogauss, X, ch, p0=ip0, bounds=(0, top_limits))
-        slope, ic, r_value, p_value, std_err = stats.linregress(ch, DataProcessing.twogauss(X, *p_ch))
+        p_ch, cov_ch = curve_fit(self.twogauss, X, ch, p0=ip0, bounds=(0, top_limits))
+        slope, ic, r_value, p_value, std_err = stats.linregress(ch, self.twogauss(X, *p_ch))
         return p_ch, r_value 
 
     def ChargePictureSumExpWithGauss(self):
@@ -73,8 +67,8 @@ class DataProcessing():
         ip0= [0, 0, 0, 0, maxSecondElement, maxSecondIndex, 10, maxElement, maxIndex, 10]
         top_limits = [self.limits] * 10
         X = np.arange(0, len(ch), 1)
-        p_ch, cov_ch = curve_fit(DataProcessing.sumexpwithgauss, X, ch, p0=ip0, bounds=([0]*len(ip0), top_limits))
-        slope, ic, r_value, p_value, std_err = stats.linregress(ch, DataProcessing.sumexpwithgauss(X, *p_ch))
+        p_ch, cov_ch = curve_fit(self.sumexpwithgauss, X, ch, p0=ip0, bounds=([0]*len(ip0), top_limits))
+        slope, ic, r_value, p_value, std_err = stats.linregress(ch, self.sumexpwithgauss(X, *p_ch))
         return p_ch, r_value
 
     def AmplePictureTwoGauss(self):
@@ -86,8 +80,8 @@ class DataProcessing():
         ip0= [maxSecondElement, maxSecondIndex, 10, maxElement, maxIndex, 10]
         top_limits = [self.limits] * 6
         X = np.arange(0, len(ap), 1)
-        p_ap, cov_ap = curve_fit(DataProcessing.twogauss, X, ap, p0=ip0, bounds=(0, top_limits))
-        slope, ic, r_value, p_value, std_err = stats.linregress(ap, DataProcessing.twogauss(X, *p_ap))
+        p_ap, cov_ap = curve_fit(self.twogauss, X, ap, p0=ip0, bounds=(0, top_limits))
+        slope, ic, r_value, p_value, std_err = stats.linregress(ap, self.twogauss(X, *p_ap))
         return p_ap, r_value
 
     def AmplePictureSumExpWithGauss(self):
@@ -99,8 +93,8 @@ class DataProcessing():
         ip0= [0, 0, 0, 0, maxSecondElement, maxSecondIndex, 10, maxElement, maxIndex, 10]
         top_limits = [self.limits] * 10
         X = np.arange(0, len(ap), 1)
-        p_ap, cov_ap = curve_fit(DataProcessing.sumexpwithgauss, X, ap, p0=ip0, bounds=([0]*len(ip0), top_limits))
-        slope, ic, r_value, p_value, std_err = stats.linregress(ap, DataProcessing.sumexpwithgauss(X, *p_ap))
+        p_ap, cov_ap = curve_fit(self.sumexpwithgauss, X, ap, p0=ip0, bounds=([0]*len(ip0), top_limits))
+        slope, ic, r_value, p_value, std_err = stats.linregress(ap, self.sumexpwithgauss(X, *p_ap))
         return p_ap, r_value
 
     def PlotCharge(self):
@@ -112,13 +106,13 @@ class DataProcessing():
         plt.ylabel(r'$Счет,~~шт.$', fontsize=12)
         plt.scatter(X, self.getterdata()[0])
         if rv_ch_two >= rv_ch_sum:
-            DataProcessing.PlotAllGauss(X, p_ch_two)
-            plt.plot(X, DataProcessing.twogauss(X, *p_ch_two), label='Аппроксимация', color='g', linewidth=2)
+            self.PlotAllGauss(X, p_ch_two)
+            plt.plot(X, self.twogauss(X, *p_ch_two), label='Аппроксимация', color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.chargename + " Два гаусса")
         else:                                                                                                                                                          
-            DataProcessing.PlotAllGaussAndExp(X, p_ch_sum)
-            plt.plot(X, DataProcessing.sumexpwithgauss(X, *p_ch_sum), label='Аппроксимация', color='g', linewidth=2)
+            self.PlotAllGaussAndExp(X, p_ch_sum)
+            plt.plot(X, self.sumexpwithgauss(X, *p_ch_sum), label='Аппроксимация', color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.chargename + " Два гаусса и экспонента")
         plt.show()
@@ -132,13 +126,13 @@ class DataProcessing():
         plt.ylabel(r'$Счет,~~шт.$', fontsize=12)
         plt.scatter(X, self.getterdata()[1])
         if rv_ap_two >= rv_ap_sum:
-            DataProcessing.PlotAllGauss(X, p_ap_two)
-            plt.plot(X, DataProcessing.twogauss(X, *p_ap_two), label='Апроксимация', color='g', linewidth=2)
+            self.PlotAllGauss(X, p_ap_two)
+            plt.plot(X, self.twogauss(X, *p_ap_two), label='Апроксимация', color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.histname + " Два гаусса")
         else:                                                                                                                                                          
-            DataProcessing.PlotAllGaussAndExp(X, p_ap_sum)
-            plt.plot(X, DataProcessing.sumexpwithgauss(X, *p_ap_sum), label='Апроксимация', color='g', linewidth=2)
+            self.PlotAllGaussAndExp(X, p_ap_sum)
+            plt.plot(X, self.sumexpwithgauss(X, *p_ap_sum), label='Апроксимация', color='g', linewidth=2)
             plt.legend(fontsize=10)
             plt.title(self.histname + " Два гаусса и экспонента")
         plt.show()
